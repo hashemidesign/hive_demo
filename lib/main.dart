@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hive_demo/models/student.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart' as path;
 
@@ -7,8 +8,16 @@ import 'presentation/screens/home/home_view.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final dir = await path.getApplicationDocumentsDirectory();
-  Hive.init(dir.path);
-  Hive.initFlutter('hive_db');
+  await Hive.initFlutter(dir.path).then((_) async {
+      await Hive.openBox('home');
+
+
+      if (!Hive.isAdapterRegistered(0)) {
+        Hive.registerAdapter<Student>(StudentAdapter());
+        await Hive.openBox<Student>('students');
+      }
+  });
+
   runApp(const MyApp());
 }
 
