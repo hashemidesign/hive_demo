@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:hive_demo/presentation/pages/bank_page.dart';
 import 'package:hive_demo/presentation/pages/home_page.dart';
 import 'package:hive_demo/presentation/pages/student_page.dart';
@@ -19,6 +20,13 @@ class _HomeViewState extends State<HomeView> {
     const TeacherPage(),
     const BankPage(),
   ];
+
+  @override
+  void dispose() {
+    Hive.box('home').compact();
+    Hive.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

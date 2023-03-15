@@ -15,7 +15,7 @@ const secureStorage = FlutterSecureStorage();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final encryptionKey = await secureStorage.read(key: "hiveKey");
-  if(encryptionKey == null){
+  if (encryptionKey == null) {
     final key = Hive.generateSecureKey();
     await secureStorage.write(key: "hiveKey", value: base64Url.encode(key));
   }
@@ -23,23 +23,32 @@ void main() async {
 
   final dir = await path.getApplicationDocumentsDirectory();
   await Hive.initFlutter(dir.path).then((_) async {
-      await Hive.openBox('home');
+    await Hive.openBox('home');
 
+    if (!Hive.isAdapterRegistered(0)) {
+      Hive.registerAdapter<Student>(StudentAdapter());
+      await Hive.openBox<Student>(
+        'students',
+        compactionStrategy: (entries, deletedEntries) => deletedEntries >= 20,
+      );
+    }
 
-      if (!Hive.isAdapterRegistered(0)) {
-        Hive.registerAdapter<Student>(StudentAdapter());
-        await Hive.openBox<Student>('students');
-      }
+    if (!Hive.isAdapterRegistered(1)) {
+      Hive.registerAdapter<Teacher>(TeacherAdapter());
+      await Hive.openBox<Teacher>(
+        'teachers',
+        compactionStrategy: (entries, deletedEntries) => deletedEntries >= 20,
+      );
+    }
 
-      if (!Hive.isAdapterRegistered(1)) {
-        Hive.registerAdapter<Teacher>(TeacherAdapter());
-        await Hive.openBox<Teacher>('teachers');
-      }
-
-      if (!Hive.isAdapterRegistered(2)) {
-        Hive.registerAdapter<Bank>(BankAdapter());
-        await Hive.openBox<Bank>('banks', encryptionCipher: HiveAesCipher(key));
-      }
+    if (!Hive.isAdapterRegistered(2)) {
+      Hive.registerAdapter<Bank>(BankAdapter());
+      await Hive.openBox<Bank>(
+        'banks',
+        encryptionCipher: HiveAesCipher(key),
+        compactionStrategy: (entries, deletedEntries) => deletedEntries >= 2,
+      );
+    }
   });
 
   runApp(const MyApp());
