@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_demo/models/student.dart';
+import 'package:hive_demo/models/teacher.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart' as path;
 
@@ -15,6 +16,11 @@ void main() async {
       if (!Hive.isAdapterRegistered(0)) {
         Hive.registerAdapter<Student>(StudentAdapter());
         await Hive.openBox<Student>('students');
+      }
+
+      if (!Hive.isAdapterRegistered(1)) {
+        Hive.registerAdapter<Teacher>(TeacherAdapter());
+        await Hive.openBox<Teacher>('teachers');
       }
   });
 
