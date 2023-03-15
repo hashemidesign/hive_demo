@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hive_demo/models/bank.dart';
 import 'package:hive_demo/models/student.dart';
 import 'package:hive_demo/models/teacher.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -21,6 +22,11 @@ void main() async {
       if (!Hive.isAdapterRegistered(1)) {
         Hive.registerAdapter<Teacher>(TeacherAdapter());
         await Hive.openBox<Teacher>('teachers');
+      }
+
+      if (!Hive.isAdapterRegistered(2)) {
+        Hive.registerAdapter<Bank>(BankAdapter());
+        await Hive.openBox<Bank>('banks');
       }
   });
 
